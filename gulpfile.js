@@ -1,17 +1,20 @@
-const gulp = require('gulp');
-const pug = require('gulp-pug');
-const sass = require('gulp-sass');
-const imagemin = require('gulp-imagemin');
-const cleancss = require('gulp-clean-css');
-const autoprefixer = require('gulp-autoprefixer');
-const concat = require('gulp-concat');
-const uglify = require('gulp-uglify');
-const rename = require('gulp-rename');
-const sourcemaps = require('gulp-sourcemaps');
-const babel = require('gulp-babel');
-const inject = require('gulp-inject');
-const debug = require('gulp-debug');
-const browserSync = require('browser-sync').create();
+import gulp from 'gulp';
+import pug from 'gulp-pug';
+import gulpSass from 'gulp-sass';
+import nodeSass from "sass";
+import imagemin from 'gulp-imagemin';
+import cleancss from 'gulp-clean-css';
+import autoprefixer from 'gulp-autoprefixer';
+import concat from 'gulp-concat';
+import uglify from 'gulp-uglify';
+import rename from 'gulp-rename';
+import sourcemaps from 'gulp-sourcemaps';
+import babel from 'gulp-babel';
+import inject from 'gulp-inject';
+import sync from 'browser-sync';
+
+const browserSync = sync.create();
+const sass = gulpSass(nodeSass);
 
 gulp.task('html', () => {
   return gulp.src('src/pug/*.pug')
@@ -35,7 +38,7 @@ gulp.task('styles', () => {
     .pipe(cleancss( {level: { 1: { specialComments: 0 } } }))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('dist/css'))
-    .pipe(browserSync.stream());
+    .pipe(browserSync.reload({ stream: true }));
 });
 
 gulp.task('images', () => {
@@ -69,7 +72,7 @@ gulp.task('scripts', () => {
     .pipe(uglify())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('dist/js'))
-    .pipe(browserSync.stream());
+    .pipe(browserSync.reload({ stream: true }));
 });
 
 gulp.task('inject', () => {
