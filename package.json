@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "watch": "gulp watch",
+    "watch": "PRODUCTION=Y yarn run gulp html",
     "build": "gulp build"
   },
   "keywords": [

@@ -7,72 +7,81 @@ import cleancss from 'gulp-clean-css';
 import autoprefixer from 'gulp-autoprefixer';
 import concat from 'gulp-concat';
 import uglify from 'gulp-uglify';
-import rename from 'gulp-rename';
 import sourcemaps from 'gulp-sourcemaps';
 import babel from 'gulp-babel';
 import inject from 'gulp-inject';
 import sync from 'browser-sync';
+import {
+  pugOptions,
+  sassOptions,
+  cleancssOptions,
+  imageminOptions,
+  autoprefixerOptions,
+  babelOptions
+} from './gulp.options.js';
 
 const browserSync = sync.create();
 const sass = gulpSass(nodeSass);
 
+const isProduction = process.env.PRODUCTION === 'Y';
+
 gulp.task('html', () => {
   return gulp.src('src/pug/*.pug')
-    .pipe(pug({
-      pretty: true
-    }))
+    .pipe(pug(pugOptions))
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('styles', () => {
-  return gulp.src('src/scss/style.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass({
-      includePaths: ['src/scss'],
-      errLogToConsole: true,
-      outputStyle: 'compressed',
-      onError: browserSync.notify
-    }))
-    .pipe(rename({ suffix: '.min', prefix : '' }))
-    .pipe(autoprefixer(['last 15 versions']))
-    .pipe(cleancss( {level: { 1: { specialComments: 0 } } }))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('dist/css'))
-    .pipe(browserSync.reload({ stream: true }));
+gulp.task('css', () => {
+  if (isProduction) {
+    return gulp.src('src/scss/style.scss')
+      .pipe(sass(sassOptions))
+      .pipe(autoprefixer(autoprefixerOptions))
+      .pipe(cleancss(cleancssOptions))
+      .pipe(gulp.dest('dist/css'));
+  } else {
+    return gulp.src('src/scss/style.scss')
+      .pipe(sourcemaps.init())
+      .pipe(sass(sassOptions))
+      .pipe(autoprefixer(autoprefixerOptions))
+      .pipe(cleancss(cleancssOptions))
+      .pipe(sourcemaps.write())
+      .pipe(gulp.dest('dist/css'))
+      .pipe(browserSync.reload({ stream: true }));
+  }
 });
 
 gulp.task('images', () => {
   return gulp.src('src/assets/images/**/*')
     .pipe(imagemin([
-      imagemin.gifsicle({interlaced: true}),
-      imagemin.mozjpeg({quality: 75, progressive: true}),
-      imagemin.optipng({optimizationLevel: 5}),
-      imagemin.svgo({
-        plugins: [
-          {removeViewBox: true},
-          {cleanupIDs: false}
-        ]
-      })
+      imagemin.gifsicle(imageminOptions.gifsicle),
+      imagemin.mozjpeg(imageminOptions.mozjpeg),
+      imagemin.optipng(imageminOptions.optipng),
+      imagemin.svgo(imageminOptions.svgo)
     ]))
     .pipe(gulp.dest('dist/images'));
 });
 
-gulp.task('icons', () => {
-  return gulp.src('src/assets/i/**/*')
-    .pipe(gulp.dest('dist/images/i'));
-});
+// gulp.task('icons', () => {
+//   return gulp.src('src/assets/i/**/*')
+//     .pipe(gulp.dest('dist/images/i'));
+// });
 
-gulp.task('scripts', () => {
-  return gulp.src('src/js/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(concat('scripts.min.js'))
-    .pipe(babel({
-      presets: ['@babel/env']
-    }))
-    .pipe(uglify())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('dist/js'))
-    .pipe(browserSync.reload({ stream: true }));
+gulp.task('js', () => {
+  if (isProduction) {
+    return gulp.src('src/js/*.js')
+      .pipe(concat('scripts.js'))
+      .pipe(babel(babelOptions))
+      .pipe(uglify())
+      .pipe(gulp.dest('dist/js'));
+  } else {
+    return gulp.src('src/js/*.js')
+      .pipe(sourcemaps.init())
+      .pipe(concat('scripts.js'))
+      .pipe(babel(babelOptions))
+      .pipe(sourcemaps.write())
+      .pipe(gulp.dest('dist/js'))
+      .pipe(browserSync.reload({ stream: true }));
+  }
 });
 
 gulp.task('inject', () => {
@@ -90,15 +99,15 @@ gulp.task('inject', () => {
 });
 
 gulp.task('build', () => {
-  return gulp.series('styles', 'scripts', 'html', 'inject', 'images', 'icons');
+  return gulp.series('css', 'js', 'html', 'inject', 'images');
 });
 
 gulp.task('default', () => {
-  gulp.watch('src/scss/**/*', gulp.series('styles', 'inject'));
+  gulp.watch('src/scss/**/*', gulp.series('css', 'inject'));
   gulp.watch('src/pug/**/*', gulp.series('html', 'inject'));
-  gulp.watch('src/js/**/*.js', gulp.series('scripts', 'inject'));
+  gulp.watch('src/js/**/*.js', gulp.series('js', 'inject'));
   gulp.watch('src/assets/images/**/*', gulp.series('images'));
-  gulp.watch('src/assets/i/**/*', gulp.series('icons'));
+  // gulp.watch('src/assets/i/**/*', gulp.series('icons'));
 
   browserSync.init({
     server: {
