@@ -1,36 +1,55 @@
 {
-  "name": "koshacha-boilerplate",
-  "version": "1.0.1",
-  "description": "html5 boilerplate",
-  "main": "index.js",
+  "name": "gulp-boilerplate",
+  "version": "1.1.0",
+  "description": "boilerplage (gulp, pug, scss)",
   "type": "module",
   "scripts": {
-    "watch": "PRODUCTION=Y yarn run gulp html",
+    "start": "gulp",
+    "prestart": "gulp build",
     "build": "gulp build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koshacha/gulp-boilerplate.git"
+  },
   "keywords": [
-    "html5",
+    "gulp",
+    "html",
     "boilerplate"
   ],
-  "author": "Kyubey",
-  "license": "MIT",
+  "author": "Ilya M.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/koshacha/gulp-boilerplate/issues"
+  },
+  "homepage": "https://github.com/koshacha/gulp-boilerplate#readme",
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
-    "browser-sync": "^2.27.5",
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@prettier/plugin-pug": "^3.0.0",
+    "breakpoint-sass": "^3.0.0",
+    "browser-sync": "^3.0.2",
     "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^8.0.0",
+    "gulp-autoprefixer": "^9.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-concat": "^2.6.1",
-    "gulp-imagemin": "^8.0.0",
+    "gulp-if": "^3.0.0",
+    "gulp-imagemin": "^7.1.0",
     "gulp-inject": "^5.0.5",
+    "gulp-node-env": "^2.0.1",
     "gulp-pug": "^5.0.0",
     "gulp-rename": "^2.0.0",
-    "gulp-sass": "^5.0.0",
+    "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-uglify": "^3.0.2",
-    "jade": "^1.11.0",
-    "sass": "^1.38.1"
+    "normalize.css": "^8.0.1",
+    "postcss": "^8.4.38",
+    "prettier": "3.2.5",
+    "prettier-plugin-css-order": "^2.0.1",
+    "pug": "^3.0.2",
+    "sass": "^1.71.1",
+    "typescript": "^5.3.3",
+    "yargs": "^17.7.2"
   }
 }
