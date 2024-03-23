@@ -1,5 +1,3 @@
-@import '../variables';
-
 .simple-block {
   display: flex;
   flex-direction: column;
@@ -15,6 +13,10 @@
     margin-bottom: 1rem;
     font-weight: 600;
     font-size: 2.5rem;
+  }
+
+  &__text {
+    line-height: 1.2;
   }
 
   &__btn {

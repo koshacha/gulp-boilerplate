@@ -91,12 +91,10 @@ export const devBuild = series(
 );
 
 export default () => {
-  const options = { ignoreInitial: false };
-
-  watch('src/styles/**/*', options, series(styles));
-  watch('src/scripts/**/*.js', options, series(scripts));
-  watch('src/(pages|components)/**/*', options, series(html, injection));
-  watch('src/assets/images/**/*', options, imageOptimisation);
+  watch('src/styles/**/*', series(styles));
+  watch('src/scripts/**/*.js', series(scripts));
+  watch('src/(pages|components)/**/*', series(html, injection));
+  watch('src/assets/images/**/*', imageOptimisation);
 
   browserSync.init({
     server: {
