@@ -29,14 +29,13 @@ export const html = () => {
 };
 
 export const styles = () => {
-  return src('src/styles/style.scss')
+  return src('src/styles/**/*.scss')
     .pipe($if(isDevelopment(), sourcemaps.init()))
     .pipe(sass(options.sass))
     .pipe(autoprefixer(options.autoprefixer))
     .pipe(cleancss(options.cleanCss))
     .pipe($if(isDevelopment(), sourcemaps.write()))
-    .pipe(dest('dist/css'))
-    .pipe($if(isDevelopment(), browserSync.reload({ stream: true })));
+    .pipe(dest('dist/css'));
 };
 
 export const imageOptimisation = () => {
@@ -58,8 +57,7 @@ export const scripts = () => {
     .pipe(babel(options.scripts))
     .pipe($if(isProduction(), uglify()))
     .pipe($if(isDevelopment(), sourcemaps.write()))
-    .pipe(dest('dist/scripts'))
-    .pipe($if(isDevelopment(), browserSync.reload({ stream: true })));
+    .pipe(dest('dist/scripts'));
 };
 
 export const injection = () => {
@@ -91,6 +89,11 @@ export const devBuild = series(
 );
 
 export default () => {
+  function reload(done) {
+    browserSync.reload();
+    done();
+  }
+
   watch('src/styles/**/*', series(styles));
   watch('src/scripts/**/*.js', series(scripts));
   watch('src/(pages|components)/**/*', series(html, injection));
@@ -102,5 +105,5 @@ export default () => {
     },
   });
 
-  return watch(['dist/**'], browserSync.reload);
+  return watch(['dist/**'], reload);
 };

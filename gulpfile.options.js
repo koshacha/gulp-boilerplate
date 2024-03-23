@@ -13,7 +13,7 @@ export default {
 
   /** @type import('node-sass').Options */
   sass: {
-    includePaths: ['src/styles'],
+    includePaths: ['node_modules/normalize.css', 'node_modules/gerillass/scss'],
     errLogToConsole: true,
     outputStyle: 'compressed',
   },
