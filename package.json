@@ -7,13 +7,8 @@
     "start": "gulp",
     "prestart": "gulp devBuild",
     "build": "gulp prodBuild",
-    "test": "mocha gulp.test.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run test",
-      "pre-commit": "npm run test"
-    }
+    "test": "mocha gulp.test.js",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
