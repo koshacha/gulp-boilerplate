@@ -1,14 +1,8 @@
 import { exec } from 'child_process';
 import { expect } from 'chai';
-
-function check(done, f) {
-  try {
-    f();
-    done();
-  } catch (e) {
-    done(e);
-  }
-}
+import fs from 'fs-extra';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 describe('gulp tasks', () => {
   it('should build project', (done) => {
@@ -19,4 +13,12 @@ describe('gulp tasks', () => {
       done();
     });
   }).timeout(10000);
+
+  after(() => {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+
+    const tempDir = join(__dirname, 'test-build');
+    fs.removeSync(tempDir);
+  });
 });
