@@ -1,44 +1,47 @@
-/*
- * Gulp-tasks arguments in one place.
- */
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-// Pug (Jade)
-export const pugOptions = {
-  pretty: true
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// SASS
-export const sassOptions = {
-  includePaths: ['src/scss'],
-  errLogToConsole: true,
-  outputStyle: 'compressed'
-};
-
-// SASS (Autoprefixer)
-export const autoprefixerOptions = ['last 15 versions'];
-
-// SASS (Remove unused CSS)
-export const cleancssOptions = {
-  level: { 1: { specialComments: 0 } }
-};
-
-// Images optimization
-export const imageminOptions = {
-  gifsicle: {interlaced: true},
-  mozjpeg: {
-    quality: 75,
-    progressive: true
+export default {
+  /** @type import('pug').Options */
+  pug: {
+    pretty: true,
+    basedir: join(__dirname, 'src'),
   },
-  optipng: {optimizationLevel: 5},
-  svgo: {
-    plugins: [
-      {removeViewBox: true},
-      {cleanupIDs: false}
-    ]
-  }
-};
 
-// JS
-export const babelOptions = {
-  presets: ['@babel/env']
+  /** @type import('node-sass').Options */
+  sass: {
+    includePaths: ['node_modules/normalize.css', 'node_modules/gerillass/scss'],
+    errLogToConsole: true,
+    outputStyle: 'compressed',
+  },
+
+  /** @type Parameters<import('gulp-babel')>[0] */
+  scripts: {
+    presets: ['@babel/env'],
+  },
+
+  /** @type import('gulp-autoprefixer').Options */
+  autoprefixer: ['last 15 versions'],
+
+  /** @type import('gulp-clean-css').Details */
+  cleanCss: {
+    level: { 1: { specialComments: 0 } },
+  },
+
+  /** @type import('imagemin-mozjpeg').Options */
+  mozjpeg: {
+    quality: 95,
+    progressive: true,
+  },
+
+  /** @type import('imagemin-optipng').Options */
+  optipng: { optimizationLevel: 5 },
+
+  /** @type import('imagemin-svgo').Options */
+  svgo: {
+    plugins: [{ removeViewBox: true }, { cleanupIDs: false }],
+  },
 };
