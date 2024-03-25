@@ -11,34 +11,43 @@ import inject from 'gulp-inject';
 import {
   isDevelopment,
   isProduction,
+  isTest,
   setProductionEnvironment,
   setDevelopmentEnvironment,
+  setTestEnvironment,
 } from 'gulp-node-env';
 import $if from 'gulp-if';
 import gulpSass from 'gulp-sass';
 import * as nodeSass from 'sass';
 import sync from 'browser-sync';
-import options from './gulpfile.options.js';
+import options from './gulp.options.js';
 
 const { src, dest, series, watch } = gulp;
 const sass = gulpSass(nodeSass);
 const browserSync = sync.create();
 
+const getDestDir = (isTest) => {
+  return isTest ? 'test-build' : 'dist';
+};
+
 export const html = () => {
-  return src('src/pages/*.pug').pipe(pug(options.pug)).pipe(dest('dist'));
+  const outDir = getDestDir(isTest());
+  return src('src/pages/*.pug').pipe(pug(options.pug)).pipe(dest(outDir));
 };
 
 export const styles = () => {
+  const outDir = getDestDir(isTest());
   return src('src/styles/**/*.scss')
     .pipe($if(isDevelopment(), sourcemaps.init()))
     .pipe(sass(options.sass))
     .pipe(autoprefixer(options.autoprefixer))
     .pipe(cleancss(options.cleanCss))
     .pipe($if(isDevelopment(), sourcemaps.write()))
-    .pipe(dest('dist/css'));
+    .pipe(dest(`${outDir}/css`));
 };
 
 export const imageOptimisation = () => {
+  const outDir = getDestDir(isTest());
   return src('src/assets/images/**/*')
     .pipe(
       imagemin([
@@ -47,31 +56,36 @@ export const imageOptimisation = () => {
         imagemin.svgo(options.svgo),
       ]),
     )
-    .pipe(dest('dist/images'));
+    .pipe(dest(`${outDir}/images`));
 };
 
 export const scripts = () => {
+  const outDir = getDestDir(isTest());
   return src('src/scripts/*.js')
     .pipe($if(isDevelopment(), sourcemaps.init()))
     .pipe(concat('app.js'))
     .pipe(babel(options.scripts))
     .pipe($if(isProduction(), uglify()))
     .pipe($if(isDevelopment(), sourcemaps.write()))
-    .pipe(dest('dist/scripts'));
+    .pipe(dest(`${outDir}/scripts`));
 };
 
 export const injection = () => {
-  return src('dist/**/*.html')
+  const outDir = getDestDir(isTest());
+
+  return src(`${outDir}/**/*.html`)
     .pipe(
-      inject(gulp.src(['dist/**/*.js', 'dist/**/*.css'], { read: false }), {
-        ignorePath: 'dist',
-      }),
+      inject(
+        gulp.src([`${outDir}/**/*.js`, `${outDir}/**/*.css`], { read: false }),
+        {
+          ignorePath: outDir,
+        },
+      ),
     )
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest(outDir));
 };
 
 export const build = series(
-  setProductionEnvironment,
   styles,
   scripts,
   html,
@@ -79,14 +93,9 @@ export const build = series(
   imageOptimisation,
 );
 
-export const devBuild = series(
-  setDevelopmentEnvironment,
-  styles,
-  scripts,
-  html,
-  injection,
-  imageOptimisation,
-);
+export const prodBuild = series(setProductionEnvironment, build);
+export const devBuild = series(setDevelopmentEnvironment, build);
+export const testBuild = series(setTestEnvironment, build);
 
 export default () => {
   function reload(done) {

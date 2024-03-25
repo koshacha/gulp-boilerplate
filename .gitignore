@@ -24,3 +24,4 @@ node_modules/
 
 # generate output
 dist
+test-build
