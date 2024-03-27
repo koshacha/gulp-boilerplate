@@ -1,5 +1,7 @@
 ## Gulp + Pug + SCSS Template
 
+[![NodeJS with Gulp](https://github.com/koshacha/gulp-boilerplate/actions/workflows/npm-gulp.yml/badge.svg)](https://github.com/koshacha/gulp-boilerplate/actions/workflows/npm-gulp.yml)
+
 ### How to get started
 
 ```sh
